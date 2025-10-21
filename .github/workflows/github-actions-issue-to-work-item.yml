@@ -31,8 +31,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # (Optional) check out the repository if you need repo files in later steps
-      - name: Checkout
-        uses: actions/checkout@v4
+      # - name: Checkout
+      # uses: actions/checkout@v4
 
       - name: Sync GitHub issue to Azure DevOps work item
         uses: danhellem/github-actions-issue-to-work-item@master
