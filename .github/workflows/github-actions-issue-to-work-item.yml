@@ -47,7 +47,7 @@ jobs:
           # Replace these values with your ADO organization/project
           # For Azure DevOps Services use: "https://dev.azure.com/<ORG_NAME>" or "<ORG_NAME>"
           # For Azure DevOps Server (on-prem) check action docs whether it expects a full URL and that your server is reachable from GitHub
-          ado_organization: "https://dev.azure.com/Myownpersonalorganizationtest"
+          ado_organization: "Myownpersonalorganizationtest"
           ado_project: "myownpersonaltest"
           ado_area_path: "myownpersonaltest"
           ado_iteration_path: "omyownpersonaltest\\Sprint 1"
