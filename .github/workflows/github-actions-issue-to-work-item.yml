@@ -3,44 +3,54 @@ name: Sync issue to Azure DevOps work item
 on:
   issues:
     types:
-      [opened, edited, deleted, closed, reopened, labeled, unlabeled, assigned]
+      - opened
+      - edited
+      - deleted
+      - closed
+      - reopened
+      - labeled
+      - unlabeled
+      - assigned
   issue_comment:
-    types: [created, edited, deleted]
-    
+    types:
+      - created
+      - edited
+      - deleted
+
 concurrency:
   group: issue-${{ github.event.issue.number }}
   cancel-in-progress: false
 
-# Extra permissions needed to login with Entra ID service principal via federated identity
+# no id-token needed when using PAT
 permissions:
-  id-token: write
   issues: write
 
 jobs:
-  alert:
+  sync:
     if: ${{ !github.event.issue.pull_request }}
     runs-on: ubuntu-latest
     steps:
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.ENTRA_APP_CLIENT_ID }}
-          tenant-id: ${{ secrets.ENTRA_APP_TENANT_ID }}
-          allow-no-subscriptions: true
-      - name: Get Azure DevOps token
-        id: get_ado_token
-        run:
-          # The resource ID for Azure DevOps is always 499b84ac-1321-427f-aa17-267ca6975798
-          # https://learn.microsoft.com/azure/devops/integrate/get-started/authentication/service-principal-managed-identity
-          echo "ado_token=$(az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 --query "accessToken" --output tsv)" >> $GITHUB_ENV
-      - uses: danhellem/github-actions-issue-to-work-item@master
+      # (Optional) check out the repository if you need repo files in later steps
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync GitHub issue to Azure DevOps work item
+        uses: danhellem/github-actions-issue-to-work-item@master
         env:
-          ado_token: "${{ env.ado_token }}"
-          github_token: "${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}"
-          ado_organization: "ado_organization_name"
-          ado_project: "your_project_name"
-          ado_area_path: "optional_area_path\\optional_area_path"
-          ado_iteration_path: "optional_iteration_path\\optional_iteration_path"
+          # Set this secret in your GitHub repo settings (Secrets > Actions)
+          # Value should be your Azure DevOps PAT (e.g. "adosynctestpat")
+          ado_token: ${{ secrets.ADO_PAT }}
+
+          # GitHub PAT used by the action to update the issue (or use GITHUB_TOKEN if sufficient)
+          github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
+
+          # Replace these values with your ADO organization/project
+          # For Azure DevOps Services use: "https://dev.azure.com/<ORG_NAME>" or "<ORG_NAME>"
+          # For Azure DevOps Server (on-prem) check action docs whether it expects a full URL and that your server is reachable from GitHub
+          ado_organization: "https://dev.azure.com/Myownpersonalorganizationtest"
+          ado_project: "myownpersonaltest"
+          ado_area_path: "myownpersonaltest"
+          ado_iteration_path: "omyownpersonaltest\\Sprint 1"
           ado_wit: "User Story"
           ado_new_state: "New"
           ado_active_state: "Active"
