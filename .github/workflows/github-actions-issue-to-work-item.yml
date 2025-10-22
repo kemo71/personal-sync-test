@@ -1,59 +1,27 @@
-name: Sync issue to Azure DevOps work item
-
+name: Test Simple Sync
 on:
   issues:
-    types:
-      - opened
-      - edited
-      - deleted
-      - closed
-      - reopened
-      - labeled
-      - unlabeled
-      - assigned
-  issue_comment:
-    types:
-      - created
-      - edited
-      - deleted
-
-concurrency:
-  group: issue-${{ github.event.issue.number }}
-  cancel-in-progress: false
-
-# no id-token needed when using PAT
-permissions:
-  issues: write
+    types: [opened]
 
 jobs:
-  sync:
+  sync-issue:
     if: ${{ !github.event.issue.pull_request }}
     runs-on: ubuntu-latest
     steps:
-      # (Optional) check out the repository if you need repo files in later steps
-      # - name: Checkout
-      # uses: actions/checkout@v4
-
-      - name: Sync GitHub issue to Azure DevOps work item
-        uses: danhellem/github-actions-issue-to-work-item@master
-        env:
-          # Set this secret in your GitHub repo settings (Secrets > Actions)
-          # Value should be your Azure DevOps PAT (e.g. "adosynctestpat")
-          ado_token: ${{ secrets.ADO_PAT }}
-
-          # GitHub PAT used by the action to update the issue (or use GITHUB_TOKEN if sufficient)
-          github_token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
-
-          # Replace these values with your ADO organization/project
-          # For Azure DevOps Services use: "https://dev.azure.com/<ORG_NAME>" or "<ORG_NAME>"
-          # For Azure DevOps Server (on-prem) check action docs whether it expects a full URL and that your server is reachable from GitHub
-          ado_organization: "Myownpersonalorganizationtest"
-          ado_project: "myownpersonaltest"
-          # ado_area_path: "myownpersonaltest"
-          # ado_iteration_path: "omyownpersonaltest\\Sprint 1"
-          ado_wit: "Product Backlog Item"
-          ado_new_state: "New"
-          ado_active_state: "Active"
-          ado_close_state: "Closed"
-          ado_bypassrules: true
-          log_level: 100
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      
+    - name: Simple sync without assignee mapping
+      uses: jessaggie/github-actions-issue-to-work-item@master
+      env:
+        ado_token: "${{ secrets.AZDO_WORK_ITEM_TOKEN }}"
+        github_token: "${{ secrets.GH_REPO_TOKEN }}"
+        ado_organization: "dev.azure.com/Myownpersonalorganizationtest"
+        ado_project: "myownpersonaltest"
+        ado_area_path: "myownpersonaltest\\Sprint 1"
+        ado_wit: "Product Backlog Item"
+        ado_new_state: "New"
+        ado_active_state: "Active"
+        ado_close_state: "Closed"
+        ado_bypassrules: true
+        log_level: 300
