@@ -1,7 +1,10 @@
 name: Test Simple Sync
 on:
   issues:
-    types: [opened]
+    types:
+      [opened, edited, closed, reopened, assigned, unassigned, labeled, unlabeled]
+  issue_comment: 
+    types: [created, edited]
 
 jobs:
   sync-issue:
