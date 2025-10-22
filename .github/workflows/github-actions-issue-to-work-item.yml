@@ -16,7 +16,7 @@ jobs:
       env:
         ado_token: "${{ secrets.AZDO_WORK_ITEM_TOKEN }}"
         github_token: "${{ secrets.GH_REPO_TOKEN }}"
-        ado_organization: "dev.azure.com/Myownpersonalorganizationtest"
+        ado_organization: "Myownpersonalorganizationtest"
         ado_project: "myownpersonaltest"
         ado_area_path: "myownpersonaltest\\Sprint 1"
         ado_wit: "Product Backlog Item"
