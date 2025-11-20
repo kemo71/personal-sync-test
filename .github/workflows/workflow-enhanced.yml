@@ -147,7 +147,7 @@ jobs:
     # === STEP 6: UPLOAD LOGS (if failed) ===
     - name: Upload logs on failure
       if: failure()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: migration-logs
         path: |
