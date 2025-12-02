@@ -1,0 +1,211 @@
+{
+  "version": "1.0",
+  "defaultProject": "siwar",
+  "globalSettings": {
+    "closedIssueHandling": {
+      "inProduction": "Done",
+      "notInProduction": "Done",
+      "noProject": "Done"
+    },
+    "unmappedStatusFallback": {
+      "open": "New",
+      "closed": "Done"
+    }
+  },
+  "workItemTypeMapping": {
+    "[Epic]": "Epic",
+    "[Story]": "Product Backlog Item",
+    "[Request]": "Product Backlog Item",
+	"[IMPROVEMENT]": "Product Backlog Item",
+    "[Bug]": "Bug",
+    "default": "Product Backlog Item"
+  },
+  "projects": {
+    "siwar": {
+      "name": "siwar",
+      "adoAreaPath": "سوار\\سوار Team",
+      "statusMappings": {
+        "Epic": {
+          "open": {
+            "No status": "New",
+            "Product Backlog": "New",
+            "Sprint Backlog": "New",
+            "Ready": "New",
+            "In Progress": "In Progress",
+            "In PR review": "In Progress",
+            "In Beta": "In Progress",
+            "In Main": "In Progress",
+            "In Production": "Done"
+          },
+          "closed": {
+            "*": "Done"
+          }
+        },
+        "Product Backlog Item": {
+          "open": {
+            "No status": "New",
+            "Product Backlog": "New",
+            "Sprint Backlog": "Approved",
+            "Ready": "Approved",
+            "In Progress": "Committed",
+            "In PR review": "Committed",
+            "In Beta": "Committed",
+            "In Main": "Committed",
+            "In Production": "Done"
+          },
+          "closed": {
+            "*": "Done"
+          }
+        },
+        "Bug": {
+          "open": {
+            "No status": "New",
+            "Product Backlog": "New",
+            "Sprint Backlog": "Approved",
+            "Ready": "Approved",
+            "In Progress": "Committed",
+            "In PR review": "Committed",
+            "In Beta": "Committed",
+            "In Main": "Committed",
+            "In Production": "Done"
+          },
+          "closed": {
+            "*": "Done"
+          }
+        },
+        "Task": {
+          "open": {
+            "No status": "To Do",
+            "Product Backlog": "To Do",
+            "Sprint Backlog": "To Do",
+            "Ready": "To Do",
+            "In Progress": "In Progress",
+            "In PR review": "In Progress",
+            "In Beta": "In Progress",
+            "In Main": "In Progress",
+            "In Production": "Done"
+          },
+          "closed": {
+            "*": "Done"
+          }
+        }
+      }
+    },
+    "falak": {
+      "name": "falak",
+      "adoAreaPath": "فلك\\فلك Team",
+      "statusMappings": {
+        "Epic": {
+          "open": {
+            "Backlog": "New",
+            "Pending": "New",
+            "Ready": "New",
+            "In progress": "In Progress",
+            "In QA": "In Progress",
+            "Done": "Done"
+          },
+          "closed": {
+            "*": "Done"
+          }
+        },
+        "Product Backlog Item": {
+          "open": {
+            "Backlog": "New",
+            "Pending": "New",
+            "Ready": "Approved",
+            "In progress": "Committed",
+            "In QA": "Committed",
+            "Done": "Done"
+          },
+          "closed": {
+            "*": "Done"
+          }
+        },
+        "Bug": {
+          "open": {
+            "Backlog": "New",
+            "Pending": "New",
+            "Ready": "Approved",
+            "In progress": "Committed",
+            "In QA": "Committed",
+            "Done": "Done"
+          },
+          "closed": {
+            "*": "Done"
+          }
+        },
+        "Task": {
+          "open": {
+            "Backlog": "To Do",
+            "Pending": "To Do",
+            "Ready": "To Do",
+            "In progress": "In Progress",
+            "In QA": "In Progress",
+            "Done": "Done"
+          },
+          "closed": {
+            "*": "Done"
+          }
+        }
+      }
+    },
+    "balsam": {
+      "name": "balsam",
+      "adoAreaPath": "بلسم\\بلسم Team",
+      "statusMappings": {
+        "Epic": {
+          "open": {
+            "No Status": "New",
+            "Todo": "New",
+            "In Progress": "In Progress",
+            "Review": "In Progress",
+            "Issues": "In Progress",
+            "Done": "Done"
+          },
+          "closed": {
+            "*": "Done"
+          }
+        },
+        "Product Backlog Item": {
+          "open": {
+            "No Status": "New",
+            "Todo": "Approved",
+            "In Progress": "Committed",
+            "Review": "Committed",
+            "Issues": "Committed",
+            "Done": "Done"
+          },
+          "closed": {
+            "*": "Done"
+          }
+        },
+        "Bug": {
+          "open": {
+            "No Status": "New",
+            "Todo": "Approved",
+            "In Progress": "Committed",
+            "Review": "Committed",
+            "Issues": "Committed",
+            "Done": "Done"
+          },
+          "closed": {
+            "*": "Done"
+          }
+        },
+        "Task": {
+          "open": {
+            "No Status": "To Do",
+            "Todo": "To Do",
+            "In Progress": "In Progress",
+            "Review": "In Progress",
+            "Issues": "In Progress",
+            "Done": "Done"
+          },
+          "closed": {
+            "*": "Done"
+          }
+        }
+      }
+    }
+  }
+}

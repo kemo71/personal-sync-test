@@ -1,0 +1,215 @@
+name: Sync GH issue to Azure DevOps work item (Enhanced)
+
+# === TRIGGERS ===
+# This workflow can be triggered in three ways:
+# 1. Automatically when issues are created/edited (event-driven)
+# 2. Manually via workflow_dispatch for bulk migration
+# 3. When comments are added to issues
+
+on:
+  # === MANUAL TRIGGER ===
+  workflow_dispatch:
+    inputs:
+      migration_mode:
+        description: 'Migration mode'
+        required: true
+        default: 'single'
+        type: choice
+        options:
+          - single          # Process current event only
+          - bulk_all        # Migrate all issues (open and closed)
+          - bulk_open       # Migrate only open issues
+          - bulk_closed     # Migrate only closed issues
+      
+      test_mode:
+        description: 'Test mode (dry run - no actual creation)'
+        required: false
+        default: false
+        type: boolean
+
+  # === AUTOMATIC TRIGGERS ===
+  issues:
+    types:
+      - opened
+      - edited
+      - closed
+      - reopened
+      - assigned
+      - unassigned
+      - labeled
+      - unlabeled
+  
+  issue_comment:
+    types:
+      - created
+      - edited
+
+# === JOB DEFINITION ===
+jobs:
+  sync:
+    # Only run for actual issues, not pull requests
+    if: ${{ !github.event.issue.pull_request }}
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+    # === STEP 1: CHECKOUT ===
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # === STEP 2: SETUP NODE.JS ===
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    # === STEP 3: INSTALL DEPENDENCIES ===
+    - name: Install dependencies
+      run: |
+        echo "📦 Installing dependencies..."
+        npm install
+
+    # === STEP 4: COPY CONFIGURATION FILES ===
+    - name: Setup configuration
+      run: |
+        echo "⚙️  Setting up configuration..."
+        
+        # Copy state mapping config if exists
+        if [ -f "Github_To_ADO_state_to_state_mapping.json" ]; then
+          cp Github_To_ADO_state_to_state_mapping.json ./
+          echo "  ✅ State mapping config loaded"
+        else
+          echo "  ⚠️  State mapping config not found, will use defaults"
+        fi
+        
+        # Copy user mapping if exists
+        if [ -f "user_mapping.json" ]; then
+          cp user_mapping.json ./
+          echo "  ✅ User mapping loaded"
+        else
+          echo "  ℹ️  User mapping will be loaded from secret"
+        fi
+
+    # === STEP 5: RUN THE SYNC ===
+    - name: Sync to Azure DevOps
+      env:
+        # === AZURE DEVOPS SETTINGS ===
+        ado_token: "${{ secrets.AZDO_WORK_ITEM_TOKEN }}"
+        ado_organization: "Myownpersonalorganizationtest"  # UPDATE THIS
+        ado_project: "سوار"           # UPDATE THIS
+        ado_area_path: "سوار"  # UPDATE THIS
+        ado_wit: "Product Backlog Item"  # Default work item type
+        ado_new_state: "New"
+        ado_active_state: "Active"
+        ado_close_state: "Done"
+        ado_bypassrules: true  # Required for date preservation
+        
+        # === GITHUB SETTINGS ===
+        github_token: "${{ secrets.GH_REPO_TOKEN }}"
+        
+        # === USER MAPPING ===
+        # Format: [["github_user", "ado_email"], ...]
+        DEVELOPER_USERNAMES: '${{ secrets.DEVELOPER_USERNAMES }}'
+        
+        # === MIGRATION MODE ===
+        MIGRATION_MODE: "${{ github.event.inputs.migration_mode || 'single' }}"
+        TEST_MODE: "${{ github.event.inputs.test_mode || 'false' }}"
+        
+        # === REPOSITORY INFO (for bulk migration) ===
+        GITHUB_REPOSITORY_OWNER: "${{ github.repository_owner }}"
+        GITHUB_REPOSITORY_NAME: "${{ github.event.repository.name }}"
+        
+        # === LOGGING ===
+        log_level: 200  # 100=minimal, 200=normal, 300=verbose
+        
+        # === CONFIGURATION FILES ===
+        STATE_MAPPING_CONFIG: "./Github_To_ADO_state_to_state_mapping.json"
+        USER_MAPPING_FILE: "./user_mapping.json"
+        
+        # === DEFAULT VALUES ===
+        defaultStoryPoints: 0.5
+        ado_parent_id: ""  # Set if you want all issues under a parent
+        
+      run: |
+        echo "🚀 Starting migration..."
+        echo "Mode: $MIGRATION_MODE"
+        
+        if [ "$MIGRATION_MODE" = "single" ]; then
+          echo "📝 Single issue sync mode"
+        else
+          echo "📦 Bulk migration mode: $MIGRATION_MODE"
+          echo "Repository: $GITHUB_REPOSITORY_OWNER/$GITHUB_REPOSITORY_NAME"
+        fi
+        
+        # Run the enhanced script
+        node index-enhanced.js
+
+    # === STEP 6: UPLOAD LOGS (if failed) ===
+    - name: Upload logs on failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: migration-logs
+        path: |
+          /tmp/migration.log
+          /tmp/failed_issues.json
+        retention-days: 7
+
+    # === STEP 7: SUMMARY ===
+    - name: Create summary
+      if: always()
+      run: |
+        echo "## Migration Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- **Mode**: ${{ github.event.inputs.migration_mode || 'single (event-driven)' }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Repository**: ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
+        
+        if [ -f "/tmp/failed_issues.json" ]; then
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "⚠️ **Some issues failed to migrate**" >> $GITHUB_STEP_SUMMARY
+          echo "Check the uploaded artifacts for details." >> $GITHUB_STEP_SUMMARY
+        fi
+
+# === CONFIGURATION NOTES ===
+# 
+# REQUIRED SECRETS:
+# - AZDO_WORK_ITEM_TOKEN: Azure DevOps Personal Access Token
+#     Scopes: Work Items (Read, Write)
+#     Create at: https://dev.azure.com/YOUR_ORG/_usersSettings/tokens
+#
+# - GH_REPO_TOKEN: GitHub Personal Access Token  
+#     Scopes: repo (full)
+#     Create at: https://github.com/settings/tokens
+#
+# - DEVELOPER_USERNAMES: JSON array of user mappings
+#     Format: [["github_user1", "ado_email1@company.com"], ...]
+#     Example: [["john", "john@company.com"], ["jane", "jane@company.com"]]
+#
+# REQUIRED FILES (in repository root):
+# - Github_To_ADO_state_to_state_mapping.json: State mapping configuration
+# - config.js: Feature flags and settings
+# - stateMapper.js: State mapping utility
+# - userMapper.js: User mapping utility
+# - githubProjects.js: GitHub Projects API client
+# - iterationCreator.js: Iteration creation utility
+# - index-enhanced.js: Main script
+# - package.json: Dependencies
+#
+# TO USE THIS WORKFLOW:
+# 1. Update the ado_organization, ado_project, and ado_area_path above
+# 2. Create the required secrets in GitHub
+# 3. Copy all the JavaScript files to your repository
+# 4. Copy the state mapping JSON file
+# 5. Test with a single issue first
+# 6. Then use manual trigger for bulk migration
+#
+# MANUAL TRIGGER INSTRUCTIONS:
+# 1. Go to Actions tab in GitHub
+# 2. Select "Sync GH issue to Azure DevOps work item (Enhanced)"
+# 3. Click "Run workflow"
+# 4. Choose migration mode (bulk_all, bulk_open, bulk_closed)
+# 5. Optionally enable test mode for dry run
+# 6. Click "Run workflow" button
+#
+# The workflow will process all issues and create/update work items in Azure DevOps.
