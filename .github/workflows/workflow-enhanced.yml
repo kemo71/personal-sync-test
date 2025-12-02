@@ -75,7 +75,7 @@ jobs:
         echo "⚙️  Setting up configuration..."
         
         # Copy state mapping config if exists
-        if [ -f "Github_To_ADO_state_to_state_mapping.json" ]; then
+        if [ -f "Github_To_ADO_state_to_state_mapping_original.json" ]; then
           cp Github_To_ADO_state_to_state_mapping.json ./
           echo "  ✅ State mapping config loaded"
         else
@@ -83,7 +83,7 @@ jobs:
         fi
         
         # Copy user mapping if exists
-        if [ -f "user_mapping.json" ]; then
+        if [ -f "user_mapping_original.json" ]; then
           cp user_mapping.json ./
           echo "  ✅ User mapping loaded"
         else
