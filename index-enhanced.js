@@ -101,6 +101,7 @@ async function handleSingleIssue(context, env) {
     
   console.log(`${JSON.stringify(context)}`);
   console.log(` vm: ${JSON.stringify(vm)} github token: ${env.github_token}`);
+  console.log(` owner: ${JSON.stringify(vm.owner)} repository: ${JSON.stringify(vm.repository)} number: ${JSON.stringify(vm.number)} areaPath: ${JSON.stringify(vm.areaPath)}`);
   projectsClient.logProjectInfo(projectInfo, config.logging.level);  
     
     if (projectInfo) {
