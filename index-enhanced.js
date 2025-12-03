@@ -92,6 +92,7 @@ async function handleSingleIssue(context, env) {
   let projectsClient = null;
   if (config.features.syncProjectStatus && env.github_token) {
     projectsClient = new GitHubProjectsClient(env.github_token);
+    console.log(` projectsClient: ${JSON.stringify(projectsClient)}`);
   }
 
   // Fetch GitHub Projects data if available
@@ -100,7 +101,7 @@ async function handleSingleIssue(context, env) {
     projectInfo = await projectsClient.getIssueProjectInfo(vm.owner, vm.repository, vm.number);
 
 
-  console.log(` projectsClient: ${JSON.stringify(projectsClient)}`); 
+ 
   console.log(` projectInfo: ${JSON.stringify(projectInfo)}`);
   console.log(` context: ${JSON.stringify(context)}`);
   console.log(` vm: ${JSON.stringify(vm)} github token: ${env.github_token}`);
