@@ -98,8 +98,10 @@ async function handleSingleIssue(context, env) {
   let projectInfo = null;
   if (projectsClient && vm.owner && vm.repository && vm.number) {
     projectInfo = await projectsClient.getIssueProjectInfo(vm.owner, vm.repository, vm.number);
+
     
-  console.log(`${JSON.stringify(context)}`);
+  console.log(` projectInfo: ${JSON.stringify(context)}`);
+  console.log(` context: ${JSON.stringify(context)}`);
   console.log(` vm: ${JSON.stringify(vm)} github token: ${env.github_token}`);
   console.log(` owner: ${JSON.stringify(vm.owner)} repository: ${JSON.stringify(vm.repository)} number: ${JSON.stringify(vm.number)} areaPath: ${JSON.stringify(vm.areaPath)}`);
   projectsClient.logProjectInfo(projectInfo, config.logging.level);  
