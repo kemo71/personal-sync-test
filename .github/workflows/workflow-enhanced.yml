@@ -75,16 +75,16 @@ jobs:
         echo "⚙️  Setting up configuration..."
         
         # Copy state mapping config if exists
-        if [ -f "Github_To_ADO_state_to_state_mapping_original.json" ]; then
-          cp Github_To_ADO_state_to_state_mapping.json ./
+        if [ -f "Github_To_ADO_state_to_state_mapping.json" ]; then
+          cp Github_To_ADO_state_to_state_mapping_original.json ./Github_To_ADO_state_to_state_mapping.json
           echo "  ✅ State mapping config loaded"
         else
           echo "  ⚠️  State mapping config not found, will use defaults"
         fi
         
         # Copy user mapping if exists
-        if [ -f "user_mapping_original.json" ]; then
-          cp user_mapping.json ./
+        if [ -f "user_mapping.json" ]; then
+          cp user_mapping_original.json ./user_mapping_original.json
           echo "  ✅ User mapping loaded"
         else
           echo "  ℹ️  User mapping will be loaded from secret"
@@ -95,9 +95,9 @@ jobs:
       env:
         # === AZURE DEVOPS SETTINGS ===
         ado_token: "${{ secrets.AZDO_WORK_ITEM_TOKEN }}"
-        ado_organization: "your-org"  # UPDATE THIS
-        ado_project: "siwar"           # UPDATE THIS
-        ado_area_path: "سوار\\سوار Team"  # UPDATE THIS
+        ado_organization: "Myownpersonalorganizationtest"  # UPDATE THIS
+        ado_project: "سوار"           # UPDATE THIS
+        ado_area_path: "سوار"  # UPDATE THIS
         ado_wit: "Product Backlog Item"  # Default work item type
         ado_new_state: "New"
         ado_active_state: "Active"
@@ -123,8 +123,8 @@ jobs:
         log_level: 200  # 100=minimal, 200=normal, 300=verbose
         
         # === CONFIGURATION FILES ===
-        STATE_MAPPING_CONFIG: "./Github_To_ADO_state_to_state_mapping.json"
-        USER_MAPPING_FILE: "./user_mapping.json"
+        STATE_MAPPING_CONFIG: "./Github_To_ADO_state_to_state_mapping_original.json"
+        USER_MAPPING_FILE: "./user_mapping_original.json"
         
         # === DEFAULT VALUES ===
         defaultStoryPoints: 0.5
