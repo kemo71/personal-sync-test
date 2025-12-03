@@ -31,7 +31,7 @@ const GitHubProjectsClient = require('./githubProjects');
 const IterationCreator = require('./iterationCreator');
 
 // === DEBUG MODE ===
-const debug = false; // Set to false before production deployment
+const debug = true; // Set to false before production deployment
 
 // === MAIN ENTRY POINT ===
 main();
