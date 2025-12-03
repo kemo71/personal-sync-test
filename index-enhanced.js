@@ -440,7 +440,9 @@ async function createWorkItem(vm, projectInfo, stateMapper, userMapper) {
   });
 
   // === AREA PATH ===
-  const areaPath = stateMapper.getAreaPath(projectName);
+  //const areaPath = stateMapper.getAreaPath(projectName);
+  console.log(` vm.env.areaPath "${vm.env.areaPath}"`)
+  const areaPath = vm.env.areaPAth
   if (areaPath) {
     patchDocument.push({
       op: "add",
