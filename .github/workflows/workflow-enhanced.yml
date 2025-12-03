@@ -120,7 +120,7 @@ jobs:
         GITHUB_REPOSITORY_NAME: "${{ github.event.repository.name }}"
         
         # === LOGGING ===
-        log_level: 200  # 100=minimal, 200=normal, 300=verbose
+        log_level: 300  # 100=minimal, 200=normal, 300=verbose
         
         # === CONFIGURATION FILES ===
         STATE_MAPPING_CONFIG: "./Github_To_ADO_state_to_state_mapping_original.json"
