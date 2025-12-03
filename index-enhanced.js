@@ -99,6 +99,11 @@ async function handleSingleIssue(context, env) {
   if (projectsClient && vm.owner && vm.repository && vm.number) {
     projectInfo = await projectsClient.getIssueProjectInfo(vm.owner, vm.repository, vm.number);
     
+  console.log(`${context}`);
+  console.log(` vm: ${vm} github token: ${env.github_token}`);
+  console.log(`📊 Found project info: ${projectInfo.projectName}`);
+  projectsClient.logProjectInfo(projectInfo, config.logging.level);  
+    
     if (projectInfo) {
       console.log(`📊 Found project info: ${projectInfo.projectName}`);
       if (config.logging.level >= 300) {
